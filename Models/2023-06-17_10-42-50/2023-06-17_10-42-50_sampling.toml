@@ -1,0 +1,31 @@
+# Argumente aus image_train create_arg_parser()
+clip_denoised=true
+num_samples=64
+batch_size=16 #@note Das hier muss die vorherige Minibatch Größe von 16 sein
+use_ddim=false
+model_path=""
+
+# Eigentlich nicht nötig aber da sich sampling un dtraining Funktionen teilen
+#@todo weniger umständlich machen
+emb_layer = "all"
+
+# Argumente aus script_until.py aus model_and_diffusion_defaults 
+image_size=32
+num_channels=128
+num_res_blocks=3
+num_heads=4
+num_heads_upsample=-1
+attention_resolutions="16,8"
+dropout=0.3
+learn_sigma=true
+sigma_small=false
+class_cond=false
+diffusion_steps=1000
+noise_schedule="cosine"
+timestep_respacing=""
+use_kl=false
+predict_xstart=false
+rescale_timesteps=true
+rescale_learned_sigmas=true
+use_checkpoint=false
+use_scale_shift_norm=true

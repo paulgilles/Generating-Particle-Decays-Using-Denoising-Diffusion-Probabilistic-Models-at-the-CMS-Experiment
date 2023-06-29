@@ -1,0 +1,6 @@
+Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-06-15_17-31-11
+creating model and diffusion...
+sampling...
+created 16 samples
+saving to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-06-15_17-31-11/samples_1_2023-06-15_17-31-11.npz
+sampling complete

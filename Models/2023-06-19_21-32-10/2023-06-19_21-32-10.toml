@@ -1,0 +1,41 @@
+# Argumente aus image_train create_arg_parser()
+data_dir=""
+schedule_sampler="uniform"
+lr=1e-4
+weight_decay=0.0
+lr_anneal_steps=200000
+batch_size=128
+microbatch=16  # NUR 16 MÖGLICH AKTUELL!!!
+ema_rate="0.9999"  # comma-separated list of EMA values
+log_interval=100
+save_interval=100000
+resume_checkpoint=""
+use_fp16=false
+fp16_scale_growth=1e-3
+preprocessing=true
+min_max_norm=false #Wenn True, verwendet Mapping zwischen [-1, 1], sonst
+                  #Normierung durch mean und std 
+emb_layer=[1,2,3] # -1 means TimeStepEmbedding in every hidden layer
+structure=[128,256,256,256,128]
+
+# Argumente aus script_until.py aus model_and_diffusion_defaults 
+image_size=32
+num_channels=64 #model_channels
+num_res_blocks=3
+num_heads=4
+num_heads_upsample=-1
+attention_resolutions="16,8"
+dropout=0.3
+learn_sigma=true
+sigma_small=false
+class_cond=false
+diffusion_steps=4000
+noise_schedule="cosine"
+timestep_respacing=""
+use_kl=false
+predict_xstart=false
+rescale_timesteps=true
+rescale_learned_sigmas=true
+use_checkpoint=false
+use_scale_shift_norm=false
+
