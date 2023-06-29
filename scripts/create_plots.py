@@ -82,17 +82,18 @@ def create_diffusion_plot(particle_type, component, preprocessing=True):
     
 
 
-def check_normalization(particle_type):
+def check_normalization(particle_type, min_max_norm=False):
     if particle_type=="muons":
         data = muon_events("all", False)
     elif particle_type=="electrons":
         data = electron_events("all", False)
     
-    normalized = preprocess(data, min_max_norm=False)
+    normalized = preprocess(data, min_max_norm=min_max_norm)
+    
+    print(np.min(data, axis=0), np.min(normalized, axis=0))
 
     print(np.mean(normalized, axis=0, keepdims=True))
     print(np.std(normalized, axis=0, keepdims=True))
-
     print(np.shape(normalized))
 
     fig, axes = plt.subplots(2, 4, figsize=(20, 10), sharey="row")
@@ -106,18 +107,18 @@ def check_normalization(particle_type):
             if i==3: range=(-200,200)
             ax.hist(data[:, 0, component[i]], bins=50, range=range)
         else: 
-            range=(-5,5)
-            ax.hist(normalized[:, 0, component[i]], bins=50, range=range)
+            range=(-1,1)
+            ax.hist(normalized[:, 0, component[i]], bins=100, range=range)
         ax.set_xlabel(labels[i])
         ax.set_ylabel("events")
 
     plt.tight_layout()
     plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
                  f"diffusion-main/plots/norm_"
-                 f"{particle_type}.pdf"))
+                 f"{particle_type}_min_max_norm={min_max_norm}.pdf"))
     plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
                  f"diffusion-main/plots/norm_"
-                 f"{particle_type}.png"))
+                 f"{particle_type}_min_max_norm={min_max_norm}.png"))
 
 
 
@@ -126,13 +127,13 @@ def check_normalization(particle_type):
 
 def main():
 
-    do_create_diffusion_plot=True
+    do_create_diffusion_plot=False
     if do_create_diffusion_plot:
         create_diffusion_plot("muons", "pz")
 
-    do_check_normalization=False
+    do_check_normalization=True
     if do_check_normalization:
-        check_normalization("muons")
+        check_normalization("muons", min_max_norm=True)
 
 
 

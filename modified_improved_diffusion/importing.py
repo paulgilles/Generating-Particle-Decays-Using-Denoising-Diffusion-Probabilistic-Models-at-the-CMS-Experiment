@@ -62,15 +62,14 @@ def calc_pseudo_rapidity(data):
     return 1/2 * np.log((abs_p + pz) / (abs_p - pz))
 
 def preprocess(data, min_max_norm):
-    """
-    Teilweise geschrieben durch ChatGPT
-    """
     if not min_max_norm:
         mean = np.mean(data, axis=0, keepdims=True) #@todo mean und std abspeichern
         std = np.std(data, axis=0, keepdims=True)
         normalized = (data - mean)/std
     elif min_max_norm:
-        normalized = (data - np.min(data)) / (np.max(data) - np.min(data)) * 2 - 1
+        minimum_of_both_vectors= np.min(np.min(data, axis=0), axis=0)
+        maximum_of_both_vectors= np.max(np.max(data, axis=0), axis=0)
+        normalized = (data - minimum_of_both_vectors) / (maximum_of_both_vectors - minimum_of_both_vectors) * 2 - 1
     return normalized
 
 
