@@ -294,7 +294,7 @@ class GaussianDiffusion:
             if denoised_fn is not None:
                 x = denoised_fn(x)
             if clip_denoised:
-                return x.clamp(-7, 7) #@note Clip Bereich hier tauschen
+                return x.clamp(-1, 1) #@note Clip Bereich hier tauschen
             if clip_denoised=="new_clipping":
                 return th.where(x<-7, 0, th.where(x>7, 0, x))
             return x
@@ -437,7 +437,6 @@ class GaussianDiffusion:
             save_denoising_process = True
             if save_denoising_process: 
                 if count % 500 == 0 or count == 0:
-                    print(times_saved, count, batch_index)
                     denoising_process_images[times_saved,batch_index*16:(batch_index+1)*16,:] = sample["sample"]
                     times_saved += 1
                     #@audit hardcoded batch size

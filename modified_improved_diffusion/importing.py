@@ -67,10 +67,56 @@ def preprocess(data, min_max_norm):
         std = np.std(data, axis=0, keepdims=True)
         normalized = (data - mean)/std
     elif min_max_norm:
-        minimum_of_both_vectors= np.min(np.min(data, axis=0), axis=0)
-        maximum_of_both_vectors= np.max(np.max(data, axis=0), axis=0)
+        minimum_of_both_vectors, maximum_of_both_vectors = find_min_and_max(
+            data, count_number=10, intervals=[(0.2, 0.2), (0.2, 0.2)]
+        )
         normalized = (data - minimum_of_both_vectors) / (maximum_of_both_vectors - minimum_of_both_vectors) * 2 - 1
     return normalized
+
+
+
+def calc_min_and_max_counts(data, minimum, maximum, intervals):
+    minimum_interval, maximum_interval = intervals
+    minimum_ulimit = minimum + minimum_interval[1]
+    maximum_ulimit = maximum + maximum_interval[1]
+    minimum_llimit = minimum - minimum_interval[0]
+    maximum_llimit = maximum - maximum_interval[0]
+
+    minimum_count = np.sum(np.sum(np.logical_and(data > minimum_llimit, data < minimum_ulimit), axis=0), axis=0)
+    maximum_count = np.sum(np.sum(np.logical_and(data > maximum_llimit, data < maximum_ulimit), axis=0), axis=0)
+    return minimum_count, maximum_count
+
+
+
+def find_min_and_max(data, count_number, intervals):
+    reshaped = np.reshape(data, (np.shape(data)[0]*np.shape(data)[1],4))
+    sorted = np.sort(reshaped, axis=0)
+    minimum = sorted[0]
+    maximum = sorted[::-1][0]
+
+    minimum_count, maximum_count = calc_min_and_max_counts(data, 
+                                                           minimum, 
+                                                           maximum,
+                                                           intervals)
+
+    minimum_line = np.array([0,0,0,0])
+    maximum_line = np.array([0,0,0,0])
+    while ((maximum_count<count_number).any() or (minimum_count<count_number).any()):
+
+        minimum_line += (minimum_count<count_number)
+        maximum_line += (maximum_count<count_number)
+        minimum = np.array([sorted[minimum_line[0]][0], sorted[minimum_line[1]][1], 
+                        sorted[minimum_line[2]][2], sorted[minimum_line[3]][3]])
+        maximum = np.array([sorted[::-1][maximum_line[0]][0], sorted[::-1][maximum_line[1]][1], 
+                        sorted[::-1][maximum_line[2]][2], sorted[::-1][maximum_line[3]][3]])
+
+        minimum_count, maximum_count = calc_min_and_max_counts(data, 
+                                                               minimum,
+                                                               maximum,
+                                                               intervals)
+    
+    return minimum, maximum
+
 
 
 def load_data(*, particle_type, batch_size, class_cond=False, deterministic=False, preprocessing=True, min_max_norm=False):

@@ -115,10 +115,10 @@ def check_normalization(particle_type, min_max_norm=False):
     plt.tight_layout()
     plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
                  f"diffusion-main/plots/norm_"
-                 f"{particle_type}_min_max_norm={min_max_norm}.pdf"))
+                 f"{particle_type}_min_max_norm={min_max_norm}_improved.pdf"))
     plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
                  f"diffusion-main/plots/norm_"
-                 f"{particle_type}_min_max_norm={min_max_norm}.png"))
+                 f"{particle_type}_min_max_norm={min_max_norm}_improved.png"))
 
 
 

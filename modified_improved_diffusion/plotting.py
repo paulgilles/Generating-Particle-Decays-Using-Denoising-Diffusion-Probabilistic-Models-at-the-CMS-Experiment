@@ -128,7 +128,7 @@ def plot_comparison_distribution(particle_type, npz_file, component):
         data = electron_events("all", False)
     else:
         raise ValueError(f"No valid input for 'particle_type'. {particle_type}")
-    data = preprocess(data, min_max_norm=False)
+    data = preprocess(data, min_max_norm=True)
     np.random.shuffle(data)
     data = data[:len(npz)]
     print(np.shape(data), np.shape(npz))
@@ -161,8 +161,8 @@ def plot_comparison_distribution(particle_type, npz_file, component):
 
     fig = plt.figure(figsize=(10,8))
     ax = fig.add_subplot(111)
-    ax.hist(hist_data, bins=80, histtype="step", color = "blue", label = "data", range=(min(hist_npz), max(hist_npz)))
-    ax.hist(hist_npz, bins=80, histtype="step", color = "red", label = "samples")
+    ax.hist(hist_data, bins=130, histtype="step", color = "blue", label = "data", range=(min(hist_npz), max(hist_npz)))
+    ax.hist(hist_npz, bins=130, histtype="step", color = "red", label = "samples")
     ax.set_xlabel(component)
     ax.set_ylabel("Häufigkeit")
     ax.set_title(f"comparison, {component}, particle_type='muons'")
@@ -170,8 +170,8 @@ def plot_comparison_distribution(particle_type, npz_file, component):
     
     plt.tight_layout()
     plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
-                "diffusion-main/Models/2023-06-28_21-54-32"
-                 f"/comparison_{component}_clip=new_clipping.png"))
+                "diffusion-main/Models/2023-06-30_10-45-01"
+                 f"/comparison_{component}_clip=True.png"))
 
     
 
@@ -231,7 +231,7 @@ if __name__=="__main__":
         plot_hist_history(paths, "px")
     
 
-    do_plot_denoising=True
+    do_plot_denoising=False
     if do_plot_denoising:
         plot_denoising(("/home/paulgilles/Bachelorarbeit/"
                         "modified-improved-diffusion-main/"
@@ -239,11 +239,12 @@ if __name__=="__main__":
                         "px")
 
 
-    do_plot_comparison=False
+    do_plot_comparison=True
     if do_plot_comparison:
         plot_comparison_distribution("muons",
                                      ("/home/paulgilles/Bachelorarbeit/modified-"
-                                      "improved-diffusion-main/Models/2023-06-28"
-                                      "_21-54-32/samples_2048_2023-06-28_21-54-32"
-                                      "_330000_clip=new_clipping.npz"), 
+                                      "improved-diffusion-main/Models/2023-06-30"
+                                      "_10-45-01/samples_2048_2023-06-30_10-45-01"
+                                      "_330000_clip=True.npz"), 
                                       "px")
+

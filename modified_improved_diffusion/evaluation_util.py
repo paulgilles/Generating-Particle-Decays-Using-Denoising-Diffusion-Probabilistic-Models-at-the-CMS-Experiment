@@ -44,6 +44,9 @@ def plot_csv_column(csv_file, column_name, result_folder, *args):
     """
     Teilweise ChatGPT
     """
+    print(csv_file)
+    print(column_name)
+    print(result_folder)
     data = np.genfromtxt(csv_file, delimiter=',', names=True)
     if column_name not in data.dtype.names:
         raise ValueError("Die angegebene Spalte existiert nicht.")
@@ -55,7 +58,11 @@ def plot_csv_column(csv_file, column_name, result_folder, *args):
     ax.set_xlabel('Step')
     ax.set_ylabel(column_name)
     ax.set_title('Plot von Spalte: ' + column_name)
-    plt.savefig(result_folder + f"/{column_name}VSSteps.png")
+    filename = result_folder + f"/{column_name}VSSteps.png"
+    plt.savefig(filename)
+
+    print(f"Der Plot wurden erfolgreich in gespeichert unter '{filename}'.")
+
 
 
 def txt_to_csv(input_file, output_file):
@@ -64,8 +71,11 @@ def txt_to_csv(input_file, output_file):
     header = ['grad_norm', 'loss', 'loss_q0', 'loss_q1', 'loss_q2', 'loss_q3',
                          'mse', 'mse_q0', 'mse_q1', 'mse_q2', 'mse_q3', 'samples',
                          'step', 'vb', 'vb_q0', 'vb_q1', 'vb_q2', 'vb_q3']
+    header_small = ['grad_norm', 'loss', 'loss_q0', 'loss_q1', 'loss_q2', 'loss_q3',
+                         'mse', 'mse_q0', 'mse_q1', 'mse_q2', 'mse_q3', 'samples',
+                         'step']
     all_lines = []
-    all_lines += [header]
+    all_lines += [header_small]
     current_line = []
     count = 0
     for line in lines:
@@ -138,9 +148,14 @@ def extract_interation_from_path(path):
 
 
 if __name__ == "__main__":
-    plot_csv_column(("/home/paulgilles/Bachelorarbeit/modified-improved-"
-                     "diffusion-main/Models/2023-06-25_13-05-34/progress.csv"),
-                     "loss", 
-                     ("/home/paulgilles/Bachelorarbeit/modified-improved"
-                      "-diffusion-main/Models/2023-06-25_13-05-34"))
-    
+
+    if True:
+        plot_csv_column(("/home/paulgilles/Bachelorarbeit/modified-improved-"
+                        "diffusion-main/Models/2023-06-29_21-19-31/progress.csv"),
+                        "loss", 
+                        ("/home/paulgilles/Bachelorarbeit/modified-improved"
+                        "-diffusion-main/Models/2023-06-29_21-19-31"))
+    if False:
+        txt_to_csv("modified-improved-diffusion-main/2023-06-29_21-19-43.txt",
+                   "modified-improved-diffusion-main/Models/2023-06-29_21-19-31/progress.csv")
+        
