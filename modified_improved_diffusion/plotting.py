@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 from modified_improved_diffusion.importing import (
     preprocess, 
     electron_events, 
@@ -11,6 +12,7 @@ from modified_improved_diffusion.evaluation_util import (
     load_npz, 
     extract_interation_from_path
 )
+
 
 def plot_4x4_grid_hist(data):
     anzahl_histogramme = data.shape[2]
@@ -119,7 +121,8 @@ def plot_hist_history(paths, component):
                  f"{epochs}.png"))
 
 
-def plot_comparison_distribution(particle_type, npz_file, component):
+def plot_comparison_distribution(particle_type, npz_file, result_folder, 
+                                 component, create_pdf=False):
 
     npz = load_npz(npz_file)
     if particle_type=="muons":
@@ -169,19 +172,30 @@ def plot_comparison_distribution(particle_type, npz_file, component):
     ax.legend()
     
     plt.tight_layout()
-    plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
-                "diffusion-main/Models/2023-06-30_10-45-01"
-                 f"/comparison_{component}_clip=True.png"))
+    file_name = f"plot_comparison_component={component}"
+    target = os.path.join(result_folder, file_name)
+    plt.savefig(target + ".png")
+    if create_pdf:
+        plt.savefig(target + ".pdf")
 
-    
 
-def plot_denoising(path, component):
-
-    
+def plot_denoising(path, component, result_folder, create_pdf=False, 
+                   num_cols=5, particle_type=None, *args):
     npz = load_npz(path)
 
+    if particle_type is not None:
+        if particle_type=="muons":
+            data = muon_events("all", False)
+        elif particle_type=="electrons":
+            data = electron_events("all", False)
+        else:
+            raise ValueError(f"No valid input for 'particle_type'. {particle_type}")
+        data = preprocess(data, min_max_norm=True)
+        np.random.shuffle(data)
+        data = data[:np.shape(npz)[1]]
+
     num_plots = np.shape(npz)[0]
-    num_cols = 5
+    num_cols = num_cols
     num_rows = (num_plots - 1) // num_cols + 1
 
     denoising_step = []
@@ -198,24 +212,57 @@ def plot_denoising(path, component):
         selected_column = 3
     else: 
         raise NotImplementedError(f"‘{component}‘ is not implemented.")
-    print(npz)
     fig, axes = plt.subplots(num_rows, num_cols, figsize=(30,6*num_rows))
     for i, ax in enumerate(axes.flat):
+        min_npz, max_npz = min(npz[i, :, 0, selected_column]), max(npz[i, :, 0, selected_column])
         if i < num_plots:
-            ax.hist(npz[i, :, selected_column, 0]) #@todo hier nehme ich wieder nur den ersten Vektor
+            ax.hist(npz[i, :, 0, selected_column], bins=50, histtype="step",
+                    color = "red", label = "samples") #@todo hier nehme ich wieder nur den ersten Vektor
+            if particle_type is not None:
+                ax.hist(data[:, :, selected_column].flatten(), 
+                        bins=50, histtype="step", color="blue", 
+                        label="data", range=(min_npz, max_npz))
             ax.set_title(f"denoising step: {denoising_step[i]}")
             ax.set_label(component)
             ax.set_ylabel("events")
+            ax.legend()
     
     plt.tight_layout()
-    timestep = "2023-06-28_21-54-32"
-    plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
-                 f"diffusion-main/Models/{timestep}/denoising_process_{component}_"
-                 f"{denoising_step}.pdf"))
-    plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
-                 f"diffusion-main/Models/{timestep}/denoising_process_{component}_"
-                 f"{denoising_step}.png"))
+    file_name = f"plot_denoising_component={component}"
+    target = os.path.join(result_folder, file_name)
+    plt.savefig(target + ".png")
+    if create_pdf:
+        plt.savefig(target + ".pdf")
     
+
+
+def plot_csv_column(csv_file, column_name, result_folder, ignore_error, create_pdf=False, *args):
+    """
+    Teilweise ChatGPT
+    """
+    print(csv_file, column_name, result_folder, ignore_error)
+    data = np.genfromtxt(csv_file, delimiter=',', names=True)
+    if column_name not in data.dtype.names:
+        if not ignore_error:
+            raise ValueError("Die angegebene Spalte existiert nicht.")
+    else: 
+        values = data[column_name]
+        steps = data['step']
+
+        fig, ax = plt.subplots(1,1)
+        ax.plot(steps, values)
+        ax.set_xlabel('Step')
+        ax.set_ylabel(column_name)
+        ax.set_title('Plot von Spalte: ' + column_name)
+        filename = result_folder + f"/{column_name}VSSteps"
+        plt.savefig(filename + ".png")
+        if create_pdf:
+            plt.savefig(filename + ".pdf")
+
+
+        print(f"Der Plot wurden erfolgreich in gespeichert unter '{filename}'.")
+
+
 
 
 

@@ -420,7 +420,7 @@ class GaussianDiffusion:
         :return: a non-differentiable batch of samples.
         """
         final = None
-        count = 0
+        count = 1
         times_saved = 0
         for sample in self.p_sample_loop_progressive(
             model,
@@ -431,12 +431,11 @@ class GaussianDiffusion:
             model_kwargs=model_kwargs,
             device=device,
             progress=progress,
-            denoising_process=[denoising_process_images, batch_index]
         ):
 
             save_denoising_process = True
             if save_denoising_process: 
-                if count % 500 == 0 or count == 0:
+                if count % 500 == 0 or count == 1 or count == 250:
                     denoising_process_images[times_saved,batch_index*16:(batch_index+1)*16,:] = sample["sample"]
                     times_saved += 1
                     #@audit hardcoded batch size
@@ -454,7 +453,6 @@ class GaussianDiffusion:
         model_kwargs=None,
         device=None,
         progress=False,
-        denoising_process=None
     ):
         """
         Generate samples from the model and yield intermediate samples from

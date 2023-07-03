@@ -2,6 +2,7 @@ import argparse
 import os
 from datetime import datetime
 import shutil
+import numpy as np
 
 from . import gaussian_diffusion as gd
 from .modified_respace import SpacedDiffusion, space_timesteps
@@ -16,17 +17,41 @@ def creating_models_folder():
     now = datetime.now()
     timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
     #base_dir = os.getcwd()
-    base_dir = "/home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main"
+    base_dir = os.getcwd()
     target_dir = os.path.join(base_dir, "Models", timestamp)
     os.mkdir(target_dir)
     os.environ["OPENAI_LOGDIR"] = target_dir
     return target_dir
+
+
+def creating_samples_folder(model_timestamp):
+    """
+    Creates a new folder named afer the date and time and sets the OPENAI_LOGDIR there.
+    """
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+    base_dir = os.getcwd() + "/Models"
+    target_dir = os.path.join(base_dir, model_timestamp, f"sample_{timestamp}")
+    os.mkdir(target_dir)
+    os.environ["OPENAI_LOGDIR"] = target_dir
+    return target_dir
+
+
 
 def copy_toml_config(source, target, sampling=False):
     target += f"/{target.split('/')[-1]}"  
     if sampling: target += "_sampling"
     target += ".toml"
     shutil.copyfile(source, target)
+
+
+
+def save_denoising_process(samples_folder, denoising_images, args):
+    file_name = (f"denoising_clip={args.clip_denoised}_steps="
+                 f"{np.shape(denoising_images)[0]}.npz")
+    target_dir = os.path.join(samples_folder, file_name)
+    np.savez(target_dir)
+    return target_dir
 
 
 

@@ -1,0 +1,12 @@
+Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-06-30_10-45-01/sample_2023-07-03_12-35-12
+creating model and diffusion...
+Traceback (most recent call last):
+  File "scripts/sampling.py", line 153, in <module>
+    main()
+  File "scripts/sampling.py", line 37, in main
+    **args_to_dict(args, model_and_diffusion_defaults().keys())
+  File "/home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/modified_improved_diffusion/modified_script_util.py", line 201, in args_to_dict
+    return {k: getattr(args, k) for k in keys}
+  File "/home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/modified_improved_diffusion/modified_script_util.py", line 201, in <dictcomp>
+    return {k: getattr(args, k) for k in keys}
+AttributeError: 'Namespace' object has no attribute 'dropout_layer'

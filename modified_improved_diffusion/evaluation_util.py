@@ -5,20 +5,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv
 
-def creating_results_folder(npz_file):
-    """
-    Creates a new folder named @todo Erklärung
-    """
-    timestamp = npz_file.split('.')[0].split('_')[-3:-1]
-    timestamp = f"{timestamp[0]}_{timestamp[1]}"
-    number_of_samples = npz_file.split("/")[-1].split("_")[1]
-    assert type(int(number_of_samples)) == int
-    base_dir = "/home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models"
-    target_dir = os.path.join(base_dir, timestamp, f"results_{number_of_samples}_{timestamp}")
-    if not os.path.exists(target_dir):
-        os.mkdir(target_dir)
-    return target_dir
-
 
 def copy_toml_config(source, target):
     timestamp = target.split('/')[-1].split('_')[-2:]
@@ -34,34 +20,10 @@ def load_npz(npz_file):
 
 def finding_progessCSV(npz_file):
     progessCSV_path=""
-    for direction in npz_file.split("/")[:-1]: 
+    for direction in npz_file.split("/")[:-2]: 
         progessCSV_path += direction + "/"
-    progessCSV_path += "/progress.csv"
+    progessCSV_path += "progress.csv"
     return progessCSV_path
-
-
-def plot_csv_column(csv_file, column_name, result_folder, *args):
-    """
-    Teilweise ChatGPT
-    """
-    print(csv_file)
-    print(column_name)
-    print(result_folder)
-    data = np.genfromtxt(csv_file, delimiter=',', names=True)
-    if column_name not in data.dtype.names:
-        raise ValueError("Die angegebene Spalte existiert nicht.")
-    values = data[column_name]
-    steps = data['step']
-
-    fig, ax = plt.subplots(1,1)
-    ax.plot(steps, values)
-    ax.set_xlabel('Step')
-    ax.set_ylabel(column_name)
-    ax.set_title('Plot von Spalte: ' + column_name)
-    filename = result_folder + f"/{column_name}VSSteps.png"
-    plt.savefig(filename)
-
-    print(f"Der Plot wurden erfolgreich in gespeichert unter '{filename}'.")
 
 
 
@@ -147,15 +109,5 @@ def extract_interation_from_path(path):
     return int(interation)
 
 
-if __name__ == "__main__":
 
-    if True:
-        plot_csv_column(("/home/paulgilles/Bachelorarbeit/modified-improved-"
-                        "diffusion-main/Models/2023-06-29_21-19-31/progress.csv"),
-                        "loss", 
-                        ("/home/paulgilles/Bachelorarbeit/modified-improved"
-                        "-diffusion-main/Models/2023-06-29_21-19-31"))
-    if False:
-        txt_to_csv("modified-improved-diffusion-main/2023-06-29_21-19-43.txt",
-                   "modified-improved-diffusion-main/Models/2023-06-29_21-19-31/progress.csv")
         

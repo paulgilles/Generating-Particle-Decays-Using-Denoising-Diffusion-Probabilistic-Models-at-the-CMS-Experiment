@@ -1,14 +1,13 @@
 import argparse
 import tomli as tomllib
+import os
 from modified_improved_diffusion.modified_script_util import (
     add_dict_to_argparser
 )
 from modified_improved_diffusion.evaluation_util import (
-    creating_results_folder,
     copy_toml_config,
     load_npz,
     finding_progessCSV,
-    plot_csv_column
 )
 import modified_improved_diffusion.plotting as plt
 import numpy as np
@@ -17,19 +16,38 @@ import numpy as np
 def main():
     args = create_argparser().parse_args()
     args_dict = vars(args)
-    result_folder = creating_results_folder(args.npz_file)
-    copy_toml_config(source=args.toml_config, target=result_folder)
-
-    data = load_npz(npz_file=args.npz_file)
-
-    progressCSV_path = finding_progessCSV(args.npz_file)
-    plot_csv_column(progressCSV_path, "loss", result_folder, *args_dict)
-    plot_csv_column(progressCSV_path, "mse", result_folder, *args_dict)
-    plot_csv_column(progressCSV_path, "vb", result_folder, *args_dict)
-    
+    sample_folder, npz_filename = os.path.split(args.npz_file)
+    copy_toml_config(source=args.toml_config, target=sample_folder)
 
 
-    
+    if args.plot_losses:
+        progressCSV_path = finding_progessCSV(args.npz_file)
+        print("hey; ", progressCSV_path)
+        for loss_type in ["loss", "mse", "vb"]:
+            plt.plot_csv_column(progressCSV_path, loss_type, sample_folder, ignore_error=True)
+
+
+    if args.plot_denoising:
+        files = os.listdir(sample_folder)
+        selected_file = None
+        for file in files:
+            if file.startswith("denoising_"):
+                selected_file = os.path.join(sample_folder, file)
+                break
+        for component in ["E", "px", "py", "pz"]:
+            plt.plot_denoising(selected_file, component, 
+                               sample_folder,
+                               num_cols=args.denoising_num_cols,
+                               particle_type=args.particle_type)
+
+
+    if args.plot_comparison:
+        for component in ["E", "px", "py", "pz"]:
+            plt.plot_comparison_distribution(args.particle_type,
+                                             args.npz_file, 
+                                             sample_folder,
+                                             component, 
+                                             create_pdf=args.create_pdf)
 
 
 def create_argparser():
