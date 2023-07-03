@@ -38,7 +38,9 @@ class forwardNet(nn.Module):
         emb_layer,
         emb_nodes,
         structure,
-        dropout=0,     #@todo Dropout einbauen
+        dropout=0,
+        norm_layer=None,
+        dropout_layer=None,
         num_classes=None,
         use_checkpoint=False,
         use_scale_shift_norm=False
@@ -53,6 +55,9 @@ class forwardNet(nn.Module):
         self.emb_layer=emb_layer
         self.structure=structure
         self.emb_nodes=emb_nodes
+        self.norm_layer=norm_layer
+        self.dropout=dropout
+        self.dropout_layer=dropout_layer
 
         self.ReLU =  th.nn.ReLU()
         self.softmax = th.nn.Softmax(dim=1)
@@ -67,8 +72,11 @@ class forwardNet(nn.Module):
             linear(self.emb_nodes, self.emb_nodes),
         )
 
+    #@note Hier fehlt ein Klassenembedding, siehe UNet
+
         self.network= self.creating_network(self.out_channels, self.structure,
-                                            self.emb_layer)
+                                            self.emb_layer, self.norm_layer,
+                                            self.dropout, self.dropout_layer)
 
 
     def forward(self, x, timesteps, y=None):
@@ -93,7 +101,8 @@ class forwardNet(nn.Module):
         return h
     
 
-    def creating_network(self, out_channels, structure, emb_layer):
+    def creating_network(self, out_channels, structure, emb_layer, 
+                         norm_layer=None, dropout=0, dropout_layer=None):
         network = []
         for index, nodes in enumerate(structure):
             if index == 0:
@@ -103,6 +112,12 @@ class forwardNet(nn.Module):
                 network += [nn.Linear(prev_nodes, nodes)]
             if index in emb_layer:
                 network += [EmbeddingBlock(self.emb_nodes, nodes)]
+            if norm_layer is not None:
+                if index in norm_layer:
+                    network += [nn.GroupNorm(int(nodes/2), nodes)]
+            if dropout_layer is not None:
+                if index in dropout_layer:
+                    network += [nn.Dropout(p=dropout)]
             network += [self.ReLU]
         prev_nodes = structure[-1]
         network += [nn.Linear(prev_nodes, out_channels*4)]

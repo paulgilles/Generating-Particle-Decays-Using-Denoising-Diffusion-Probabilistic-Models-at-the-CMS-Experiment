@@ -37,6 +37,8 @@ def model_and_diffusion_defaults(): #@note Die Nutzung dieser Funktion scheint u
     return dict(
         emb_layer=[2],
         structure=[16,10,8,10,16],
+        dropout_layer=[0,4],
+        norm_layer=[2],
         emb_nodes=16,
         dropout=0.3,
         learn_sigma=True,
@@ -63,6 +65,8 @@ def create_model_and_diffusion(
     learn_sigma,
     sigma_small,
     dropout,
+    dropout_layer,
+    norm_layer,
     diffusion_steps,
     noise_schedule,
     timestep_respacing,
@@ -81,7 +85,9 @@ def create_model_and_diffusion(
         class_cond=class_cond,
         use_checkpoint=use_checkpoint,
         use_scale_shift_norm=use_scale_shift_norm,
-        dropout=dropout
+        dropout=dropout,
+        dropout_layer=dropout_layer,
+        norm_layer=norm_layer
     )
     diffusion = create_gaussian_diffusion(
         steps=diffusion_steps,
@@ -107,6 +113,8 @@ def create_model(
     use_checkpoint,
     use_scale_shift_norm,
     dropout,
+    dropout_layer,
+    norm_layer
 ):
 
     return forwardNet(
@@ -114,7 +122,9 @@ def create_model(
         emb_layer=emb_layer,
         structure=structure,
         out_channels=(2 if not learn_sigma else 4),
+        norm_layer=norm_layer,
         dropout=dropout,
+        dropout_layer=dropout_layer,
         num_classes=(NUM_CLASSES if class_cond else None),
         use_checkpoint=use_checkpoint,
         use_scale_shift_norm=use_scale_shift_norm
