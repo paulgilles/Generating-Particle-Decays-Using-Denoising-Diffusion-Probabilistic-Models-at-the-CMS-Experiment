@@ -34,6 +34,7 @@ def main():
             if file.startswith("denoising_"):
                 selected_file = os.path.join(sample_folder, file)
                 break
+        print(selected_file)
         for component in ["E", "px", "py", "pz"]:
             plt.plot_denoising(selected_file, component, 
                                sample_folder,

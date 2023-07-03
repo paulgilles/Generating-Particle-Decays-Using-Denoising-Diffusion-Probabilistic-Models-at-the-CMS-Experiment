@@ -50,7 +50,7 @@ def save_denoising_process(samples_folder, denoising_images, args):
     file_name = (f"denoising_clip={args.clip_denoised}_steps="
                  f"{np.shape(denoising_images)[0]}.npz")
     target_dir = os.path.join(samples_folder, file_name)
-    np.savez(target_dir)
+    np.savez(target_dir, denoising_images)
     return target_dir
 
 
