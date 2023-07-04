@@ -182,7 +182,6 @@ def plot_comparison_distribution(particle_type, npz_file, result_folder,
 def plot_denoising(path, component, result_folder, create_pdf=False, 
                    num_cols=5, particle_type=None, *args):
     npz = load_npz(path)
-
     if particle_type is not None:
         if particle_type=="muons":
             data = muon_events("all", False)
@@ -200,7 +199,8 @@ def plot_denoising(path, component, result_folder, create_pdf=False,
 
     denoising_step = []
     for step in range(np.shape(npz)[0]):
-        denoising_step += [step * 500]
+        #denoising_step += [step * 500]
+        denoising_step = [3500, 3600, 3650, 3700, 3750, 3800, 3850, 3900, 3950, 4000]
 
     if component=="E":
         selected_column = 0
@@ -214,12 +214,12 @@ def plot_denoising(path, component, result_folder, create_pdf=False,
         raise NotImplementedError(f"‘{component}‘ is not implemented.")
     fig, axes = plt.subplots(num_rows, num_cols, figsize=(30,6*num_rows))
     for i, ax in enumerate(axes.flat):
-        min_npz, max_npz = min(npz[i, :, 0, selected_column]), max(npz[i, :, 0, selected_column])
         if i < num_plots:
+            min_npz, max_npz = min(npz[i, :, 0, selected_column]), max(npz[i, :, 0, selected_column])
             ax.hist(npz[i, :, 0, selected_column], bins=50, histtype="step",
                     color = "red", label = "samples") #@todo hier nehme ich wieder nur den ersten Vektor
             if particle_type is not None:
-                ax.hist(data[:, :, selected_column].flatten(), 
+                ax.hist(data[:, 0, selected_column].flatten(), 
                         bins=50, histtype="step", color="blue", 
                         label="data", range=(min_npz, max_npz))
             ax.set_title(f"denoising step: {denoising_step[i]}")

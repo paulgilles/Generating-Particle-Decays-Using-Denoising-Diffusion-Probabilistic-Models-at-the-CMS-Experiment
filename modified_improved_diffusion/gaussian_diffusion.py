@@ -435,7 +435,8 @@ class GaussianDiffusion:
 
             save_denoising_process = True
             if save_denoising_process: 
-                if count % 500 == 0 or count == 1 or count == 250:
+                #if count % 500 == 0 or count == 1 or count == 250:
+                if count in [3500, 3600, 3650, 3700, 3750, 3800, 3850, 3900, 3950, 4000]:
                     denoising_process_images[times_saved,batch_index*16:(batch_index+1)*16,:] = sample["sample"]
                     times_saved += 1
                     #@audit hardcoded batch size

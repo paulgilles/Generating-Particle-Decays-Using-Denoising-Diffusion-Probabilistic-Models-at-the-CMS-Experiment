@@ -1,4 +1,4 @@
-Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-03_11-38-10/sample_2023-07-03_16-44-20
+Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-03_11-38-10/sample_2023-07-03_22-49-44
 creating model and diffusion...
 sampling...
 created 16 samples
@@ -129,5 +129,5 @@ created 2000 samples
 created 2016 samples
 created 2032 samples
 created 2048 samples
-saving to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-03_11-38-10/sample_2023-07-03_16-44-20/sample_num=2048_clip=True_steps=300000.npz
+saving to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-03_11-38-10/sample_2023-07-03_22-49-44/sample_num=2048_clip=True_steps=300000.npz
 sampling complete
