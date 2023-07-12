@@ -1,0 +1,18 @@
+plot_losses=true
+plot_denoising=true
+plot_comparison=true
+plot_hist_history=false
+
+model_type="ema"
+particle_type="muons"
+denoising_num_cols=5
+hist_history_num_cols=5
+hist_history_iterations=10
+
+create_pdf=false
+
+
+title_size = 16
+
+color1 = "blue"
+color2 = "red"

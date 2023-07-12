@@ -1,0 +1,37 @@
+# Argumente aus image_train create_arg_parser()
+lr_anneal_steps=330000
+preprocessing=true
+min_max_norm=true #Wenn True, verwendet Mapping zwischen [-1, 1], sonst
+                   #Normierung durch mean und std 
+emb_layer=[2] # -1 means TimeStepEmbedding in every hidden layer
+norm_layer=[] #number of nodes in norm_layer has to be even
+structure=[16,10,8,10,16]
+dropout_layer=[]
+emb_nodes=16 #need to be 4 * i with i e Z
+batch_size=128
+microbatch=16  #@todo ist es richtig, dass beim sampling batchsize = microbatch sein muss?
+log_interval=300
+save_interval=30000
+
+lr=1e-4
+weight_decay=0.0
+resume_checkpoint=""
+use_fp16=false
+schedule_sampler="uniform"
+fp16_scale_growth=1e-3
+ema_rate="0.9999"  # comma-separated list of EMA values
+
+# Argumente aus script_until.py aus model_and_diffusion_defaults 
+dropout=0.3
+learn_sigma=false
+sigma_small=true
+class_cond=false
+diffusion_steps=4000
+noise_schedule="cosine"
+timestep_respacing=""
+use_kl=false
+predict_xstart=false
+rescale_timesteps=true
+rescale_learned_sigmas=false
+use_checkpoint=false
+use_scale_shift_norm=false

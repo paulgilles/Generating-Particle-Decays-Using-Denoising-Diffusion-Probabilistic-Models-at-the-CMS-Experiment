@@ -19,16 +19,24 @@ from modified_improved_diffusion.modified_script_util import (
     args_to_dict,
     copy_toml_config,
     creating_samples_folder,
-    save_denoising_process
+    save_denoising_process,
+    check_if_denoising_steps_is_valid,
 )
 
 def main():
     
-    args = create_argparser().parse_args()
+    parser, sampling_in_loop = create_argparser()
+    args = parser.parse_args()
 
     model_timestamp = args.model_path.split('/')[-2]
-    samples_folder = creating_samples_folder(model_timestamp)
-    copy_toml_config(args.toml_config, samples_folder, sampling=True)
+    if not sampling_in_loop:
+        samples_folder = creating_samples_folder(model_timestamp)
+        copy_toml_config(args.toml_config, samples_folder, sampling=True)
+    else:
+        model_folder, model_filename = os.path.split(args.model_path)
+        samples_folder = os.path.join(model_folder, "all_samples")
+
+    check_if_denoising_steps_is_valid(args.diffusion_steps, args.denoising_steps)
 
     dist_util.setup_dist()
     logger.configure()
@@ -64,6 +72,7 @@ def main():
             clip_denoised=args.clip_denoised,
             model_kwargs=model_kwargs,
             batch_index=batch_index,
+            denoising_steps=args.denoising_steps,
             denoising_process_images=denoising_process_images
         )
         batch_index += 1
@@ -96,8 +105,11 @@ def main():
         label_arr = label_arr[: args.num_samples]
     if dist.get_rank() == 0:
         learning_step = args.model_path.split('/')[-1].split('_')[-1].split('.')[0]
-        file_name = (f"sample_num={args.num_samples}_clip={args.clip_denoised}_"
-                     f"steps={learning_step}.npz")
+        if not sampling_in_loop:
+            file_name = (f"sample_num={args.num_samples}_clip={args.clip_denoised}_"
+                        f"steps={learning_step}.npz")
+        else:
+            file_name = model_filename[:-3] + "_sample.npz"
         out_path = os.path.join(samples_folder, file_name)
         logger.log(f"saving to {out_path}")
         if args.class_cond:
@@ -131,6 +143,11 @@ def create_argparser():
         raise ValueError(("You have to give an toml config file: "
                           "‘--toml_config path/to/file‘"))
 
+    sampling_in_loop = False
+    if "sampling_in_loop" in args.toml_config:
+        toml_config_path = args.toml_config.split("//")[1]
+        sampling_in_loop = True
+
     with open(toml_config_path, "rb") as f:
         toml_config = tomllib.load(f)
     
@@ -149,7 +166,7 @@ def create_argparser():
     all_arguments["batch_size"] = all_arguments["microbatch"]
     second_parser = argparse.ArgumentParser()
     add_dict_to_argparser(second_parser, all_arguments)
-    return second_parser
+    return second_parser, sampling_in_loop
 
 
 if __name__ == "__main__":

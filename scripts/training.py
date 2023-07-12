@@ -43,7 +43,9 @@ def main():
         batch_size=args.batch_size,
         class_cond=args.class_cond,
         preprocessing=args.preprocessing,
-        min_max_norm=args.min_max_norm
+        min_max_norm=args.min_max_norm,
+        preprocess_count_number=args.preprocess_count_number,
+        preprocess_intervals=args.preprocess_intervals
     )
 
     logger.log("training...")

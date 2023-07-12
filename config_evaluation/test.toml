@@ -1,12 +1,22 @@
-plot_losses=true
-plot_denoising=true
-plot_comparison=true
+plot_losses=false
+plot_denoising=false
+plot_comparison=false
+plot_hist_history=false
+plot_Z_analyse=true
 
-
+model_type="ema"
 particle_type="muons"
 denoising_num_cols=5
+hist_history_num_cols=5
+hist_history_iterations=5
+
+min_max_norm=true
 
 create_pdf=false
+
+#@audit Das muss noch geändert werden
+count_number = 10 
+intervals = [[0.2, 0.2], [0.2, 0.2]]
 
 
 title_size = 16

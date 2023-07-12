@@ -4,7 +4,9 @@ preprocessing=true
 min_max_norm=true #Wenn True, verwendet Mapping zwischen [-1, 1], sonst
                    #Normierung durch mean und std 
 emb_layer=[2] # -1 means TimeStepEmbedding in every hidden layer
+norm_layer=[] #number of nodes in norm_layer has to be even
 structure=[16,10,8,10,16]
+dropout_layer=[]
 emb_nodes=16 #need to be 4 * i with i e Z
 batch_size=128
 microbatch=16  #@todo ist es richtig, dass beim sampling batchsize = microbatch sein muss?
@@ -33,4 +35,3 @@ rescale_timesteps=true
 rescale_learned_sigmas=false
 use_checkpoint=false
 use_scale_shift_norm=false
-

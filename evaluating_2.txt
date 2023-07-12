@@ -1,0 +1,22 @@
+hey;  Models/2023-07-05_11-12-08/progress.csv
+Models/2023-07-05_11-12-08/progress.csv loss Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17 True
+Der Plot wurden erfolgreich in gespeichert unter 'Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17/lossVSSteps'.
+Models/2023-07-05_11-12-08/progress.csv mse Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17 True
+Der Plot wurden erfolgreich in gespeichert unter 'Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17/mseVSSteps'.
+Models/2023-07-05_11-12-08/progress.csv vb Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17 True
+{'create_pdf': False, 'npz_file': 'Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17/sample_num=2048_clip=True_steps=200000.npz', 'particle_type': 'muons'}
+(2048, 2, 4) (2048, 4, 2)
+(2048, 2, 4)
+(4096,) (4096,)
+{'create_pdf': False, 'npz_file': 'Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17/sample_num=2048_clip=True_steps=200000.npz', 'particle_type': 'muons'}
+(2048, 2, 4) (2048, 4, 2)
+(2048, 2, 4)
+(4096,) (4096,)
+{'create_pdf': False, 'npz_file': 'Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17/sample_num=2048_clip=True_steps=200000.npz', 'particle_type': 'muons'}
+(2048, 2, 4) (2048, 4, 2)
+(2048, 2, 4)
+(4096,) (4096,)
+{'create_pdf': False, 'npz_file': 'Models/2023-07-05_11-12-08/sample_2023-07-06_11-20-17/sample_num=2048_clip=True_steps=200000.npz', 'particle_type': 'muons'}
+(2048, 2, 4) (2048, 4, 2)
+(2048, 2, 4)
+(4096,) (4096,)

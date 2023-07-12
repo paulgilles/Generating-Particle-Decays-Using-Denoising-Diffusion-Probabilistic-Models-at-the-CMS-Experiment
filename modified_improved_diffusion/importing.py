@@ -48,31 +48,108 @@ def muon_events(number, shuffle=True):
         else: 
             return muons[:number]
 
-def calc_pT(data):
-    px = data[:, :, 1]
-    py = data[:, :, 2]
+def calc_pT(data, vector_pos=None):
+    if np.shape(data)[1:] == (2,4):
+        px = data[:,:,1]
+        py = data[:,:,2]
+        single_vector = False
+    elif np.shape(data)[1:] == (4,):
+        px = data[:,1]
+        py = data[:,2]
+        single_vector = True
+    else: 
+        raise ValueError(f"Unknown shape for eta calculation: shape={np.shape(data)}.")
     pT = np.sqrt(px**2 + py**2)
+    if vector_pos is not None and not single_vector:
+        pT = pT[:, vector_pos]
     return pT
 
-def calc_pseudo_rapidity(data):
-    px = data[:, :, 1]
-    py = data[:, :, 2]
-    pz = data[:, :, 3]
-    abs_p = np.sqrt(px**2 + py**2 + pz**2)
-    return 1/2 * np.log((abs_p + pz) / (abs_p - pz))
 
-def preprocess(data, min_max_norm):
+def calc_pseudo_rapidity(data, vector_pos=None):
+    if np.shape(data)[1:] == (2,4):
+        px = data[:,:,1]
+        py = data[:,:,2]
+        pz = data[:,:,3]
+        single_vector = False
+    elif np.shape(data)[1:] == (4,):
+        px = data[:,1]
+        py = data[:,2]
+        pz = data[:,3]
+        single_vector = True
+    else: 
+        raise ValueError(f"Unknown shape for eta calculation: shape={np.shape(data)}.")
+    abs_p = np.sqrt(px**2 + py**2 + pz**2)
+    eta = 1/2 * np.log((abs_p + pz) / (abs_p - pz))
+    if vector_pos is not None and not single_vector:
+        eta = eta[:, vector_pos]
+    return eta
+
+
+def calc_Z_vector(data):
+    p1 = data[:, 0, :]
+    p2 = data[:, 1, :]
+    z = p1 + p2
+    return z
+
+
+def calc_m(data, vector_pos=None):
+    if np.shape(data)[1:] == (2,4):
+        E = data[:,:,0]
+        px = data[:,:,1]
+        py = data[:,:,2]
+        pz = data[:,:,3]
+        single_vector = False
+    elif np.shape(data)[1:] == (4,):
+        E = data[:,0]
+        px = data[:,1]
+        py = data[:,2]
+        pz = data[:,3]
+        single_vector = True
+    else: 
+        raise ValueError(f"Unknown shape for mass calculation: shape={np.shape(data)}.")
+    m = np.sqrt(E**2 - (px**2+py**2+pz**2))
+    if vector_pos is not None and not single_vector:
+        m = m[:, vector_pos]
+    return m
+
+
+
+
+def preprocess(data, min_max_norm, count_number=10, intervals=[(0.2, 0.2), (0.2, 0.2)], full_output=False):
     if not min_max_norm:
         mean = np.mean(data, axis=0, keepdims=True) #@todo mean und std abspeichern
         std = np.std(data, axis=0, keepdims=True)
         normalized = (data - mean)/std
+        if full_output:
+            return normalized, mean, std
     elif min_max_norm:
         minimum_of_both_vectors, maximum_of_both_vectors = find_min_and_max(
-            data, count_number=10, intervals=[(0.2, 0.2), (0.2, 0.2)]
+            data, count_number=count_number, intervals=intervals
         )
         normalized = (data - minimum_of_both_vectors) / (maximum_of_both_vectors - minimum_of_both_vectors) * 2 - 1
+        if full_output:
+            return normalized, minimum_of_both_vectors, maximum_of_both_vectors
     return normalized
 
+
+
+def postprocess(data, min_max_norm, arg1, arg2):
+    """Does the preprocess ‘in reverse‘.
+
+    Args:
+        data (array_like): data which should be postprocess
+        min_max_norm (bool): Whether min_max_norm was used or not
+        arg1 (float): mean or minimum
+        arg2 (float): std or maximum
+    """
+    if not min_max_norm:
+        raise NotImplementedError(("postprocessing for min_max_norm=False"
+                                   " is not implemented."))
+    else:
+        minimum = arg1
+        maximum = arg2
+        data = (data + 1) * (maximum - minimum) / 2 + minimum
+    return data
 
 
 def calc_min_and_max_counts(data, minimum, maximum, intervals):
@@ -119,7 +196,9 @@ def find_min_and_max(data, count_number, intervals):
 
 
 
-def load_data(*, particle_type, batch_size, class_cond=False, deterministic=False, preprocessing=True, min_max_norm=False):
+def load_data(*, particle_type, batch_size, class_cond=False, 
+              deterministic=False, preprocessing=True, min_max_norm=False,
+              preprocess_count_number=10, preprocess_intervals=[(0.2,0.2), (0.2,0.2)]):
     if not particle_type:
         raise ValueError(("unspecified particle type. It has to be 'muons', "
                           "'electrons' or 'both'."))
@@ -134,7 +213,8 @@ def load_data(*, particle_type, batch_size, class_cond=False, deterministic=Fals
         data = load_all_data(path)
 
     if preprocessing:
-        data = preprocess(data, min_max_norm)
+        data = preprocess(data, min_max_norm, preprocess_count_number, 
+                          preprocess_intervals)
 
 
     classes=None

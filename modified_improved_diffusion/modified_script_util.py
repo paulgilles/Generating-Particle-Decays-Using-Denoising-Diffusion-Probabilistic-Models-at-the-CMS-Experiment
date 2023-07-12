@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 import shutil
 import numpy as np
+import inspect
 
 from . import gaussian_diffusion as gd
 from .modified_respace import SpacedDiffusion, space_timesteps
@@ -37,10 +38,12 @@ def creating_samples_folder(model_timestamp):
     return target_dir
 
 
-
-def copy_toml_config(source, target, sampling=False):
+def copy_toml_config(source, target, sampling=False, evaluate=False):
     target += f"/{target.split('/')[-1]}"  
     if sampling: target += "_sampling"
+    if evaluate: target += "_evaluate"
+    if sampling and evaluate:
+        raise ValueError("‘sampling‘ and ‘evaluate‘ can not be both True.")
     target += ".toml"
     shutil.copyfile(source, target)
 
@@ -52,6 +55,14 @@ def save_denoising_process(samples_folder, denoising_images, args):
     target_dir = os.path.join(samples_folder, file_name)
     np.savez(target_dir, denoising_images)
     return target_dir
+
+
+def check_if_denoising_steps_is_valid(diffusion_steps, denoising_steps):
+    last_value = denoising_steps[-1]
+    a, b = diffusion_steps-100, diffusion_steps+100
+    if not a < last_value < b:
+        raise ValueError("The choice of 'denoising_steps' does not fit well"
+                        f"with 'diffusion_steps'={diffusion_steps}.")
 
 
 
@@ -205,6 +216,16 @@ def add_dict_to_argparser(parser, default_dict):
         elif isinstance(v, bool):
             v_type = str2bool
         parser.add_argument(f"--{k}", default=v, type=v_type)
+
+
+def filter_args(function, all_args):
+    signature = inspect.signature(function)
+    parameters = signature.parameters
+    filtered_args = {}
+    for key in parameters.keys():
+        if key in all_args:
+            filtered_args[key] = all_args[key]
+    return filtered_args
 
 
 def args_to_dict(args, keys):

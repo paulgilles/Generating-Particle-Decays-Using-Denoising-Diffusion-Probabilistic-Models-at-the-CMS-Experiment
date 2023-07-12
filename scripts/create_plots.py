@@ -1,5 +1,5 @@
 from modified_improved_diffusion.modified_script_util import create_gaussian_diffusion
-from modified_improved_diffusion.importing import electron_events, muon_events, preprocess
+from modified_improved_diffusion.importing import electron_events, muon_events, preprocess, postprocess
 import torch as th
 import numpy as np
 import matplotlib.pyplot as plt
@@ -88,37 +88,34 @@ def check_normalization(particle_type, min_max_norm=False):
     elif particle_type=="electrons":
         data = electron_events("all", False)
     
-    normalized = preprocess(data, min_max_norm=min_max_norm)
+    normalized, min, max = preprocess(data, min_max_norm=min_max_norm, full_output=True)
     
-    print(np.min(data, axis=0), np.min(normalized, axis=0))
-
-    print(np.mean(normalized, axis=0, keepdims=True))
-    print(np.std(normalized, axis=0, keepdims=True))
-    print(np.shape(normalized))
-
-    fig, axes = plt.subplots(2, 4, figsize=(20, 10), sharey="row")
+    fig, axes = plt.subplots(3, 4, figsize=(20, 15), sharey="row")
     
-    component = [0,1,2,3] * 2
-    labels = ["E", "px", "py", "pz"] * 2
+    component = [0,1,2,3] * 3
+    labels = ["E", "px", "py", "pz"] * 3
     for i, ax in enumerate(axes.flat):
         if i < 4:
             range=(-100,100)
             if i==0: range=(0,100)
             if i==3: range=(-200,200)
             ax.hist(data[:, 0, component[i]], bins=50, range=range)
-        else: 
+        elif i < 8: 
             range=(-1,1)
             ax.hist(normalized[:, 0, component[i]], bins=100, range=range)
+        else: 
+            range=(-100, 100)
+            post_data = postprocess(normalized, min_max_norm, min, max)
+            ax.hist(post_data[:, 0, component[i]], bins=50, range=range)
         ax.set_xlabel(labels[i])
         ax.set_ylabel("events")
 
     plt.tight_layout()
     plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
                  f"diffusion-main/plots/norm_"
-                 f"{particle_type}_min_max_norm={min_max_norm}_improved.pdf"))
-    plt.savefig(("/home/paulgilles/Bachelorarbeit/modified-improved-"
-                 f"diffusion-main/plots/norm_"
-                 f"{particle_type}_min_max_norm={min_max_norm}_improved.png"))
+                 f"{particle_type}_min_max_norm={min_max_norm}_post.png"))
+    
+    print("Plot saved.")
 
 
 
