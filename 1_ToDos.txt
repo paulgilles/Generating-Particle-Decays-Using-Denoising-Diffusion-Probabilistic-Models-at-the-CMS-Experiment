@@ -7,6 +7,7 @@ Plots verbessern
 Elektronen
 neue Metrik
 Winkel Plot
+KL Div symmetrisch machen durch Addition (siehe Wikipedia)
 
 Heute
 [Check] Write_to_txt fixen 
@@ -14,7 +15,7 @@ Heute
      Datei) (30 Min)
 [Check] write_to_txt testen (15 Min)
 Pause (15 Min)
-decoder nll verbessern (1 Stunde)
+[Check] decoder nll verbessern (1 Stunde)
 Trainings losschicken
 CSV Tabelle nachtragen
 (function that searches 

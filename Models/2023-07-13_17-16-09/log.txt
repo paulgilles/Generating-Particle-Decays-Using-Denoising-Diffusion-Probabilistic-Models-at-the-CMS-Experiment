@@ -1,0 +1,29 @@
+Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-13_17-16-09
+creating model and diffusion...
+creating data loader...
+training...
+------------------------
+| grad_norm | 0.788    |
+| loss      | 0.998    |
+| loss_q0   | 1.02     |
+| loss_q1   | 0.91     |
+| loss_q2   | 0.943    |
+| loss_q3   | 1.12     |
+| mse       | 0.962    |
+| mse_q0    | 1        |
+| mse_q1    | 0.906    |
+| mse_q2    | 0.939    |
+| mse_q3    | 1        |
+| samples   | 128      |
+| step      | 0        |
+| vb        | 0.036    |
+| vb_q0     | 0.0164   |
+| vb_q1     | 0.00444  |
+| vb_q2     | 0.00495  |
+| vb_q3     | 0.115    |
+------------------------
+saving model 0...
+saving model 0.9999...
+saving model 0...
+saving model 0.9999...
+! Time needed: 00:00:01.

@@ -8,6 +8,25 @@ import numpy as np
 
 import torch as th
 
+def log_p_x0_x1(x, means, log_scales):
+    tensor = None
+    for obj in (means, log_scales):
+        if isinstance(obj, th.Tensor):
+            tensor = obj
+            break
+    assert tensor is not None, "at least one argument must be a Tensor"
+
+    # Force variances to be Tensors. Broadcasting helps convert scalars to
+    # Tensors, but it does not work for th.exp().
+    log_scales = (log_scales if isinstance(log_scales,th.Tensor) 
+                  else th.tensor(log_scales).to(tensor))
+    
+    norm_factor = 1/np.sqrt(2*np.pi) * np.exp(-1/2) * th.exp(log_scales)
+    mean_factor = th.exp(-1/2 * (x-means)**2)
+    log_factor = th.exp(th.exp(-log_scales))
+    p_x0_x1 = norm_factor * mean_factor * log_factor
+    return th.log(p_x0_x1)
+
 
 def normal_kl(mean1, logvar1, mean2, logvar2):
     """

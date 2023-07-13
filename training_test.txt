@@ -1,36 +1,41 @@
 Last == leer:  True
 TXT LOG, new_line: 
-2023-07-13_15-36-19;;;;10;;True;True;10;[[0.2, 0.2], [0.2, 0.2]];[2];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True
+2023-07-13_17-16-09;;;;10;;True;False;10;[[0.2, 0.2], [0.2, 0.2]];[0, 1, 2, 3, 4];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True
 
-Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-13_15-36-19
+Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-13_17-16-09
 creating model and diffusion...
 creating data loader...
 training...
+
+PREPROCESSING STD AND MEAN
+mean=[[[ 7.8681198e+01  1.9833768e-02 -3.6566306e-02  8.5942663e-02]
+  [ 7.7337234e+01 -1.4387694e-03  2.3805335e-02 -5.5994589e-02]]], std=[[[49.57138  28.760916 28.675587 83.64905 ]
+  [48.950497 28.698109 28.62729  82.05483 ]]]
 ------------------------
-| grad_norm | 0.799    |
-| loss      | 0.977    |
-| loss_q0   | 1.05     |
-| loss_q1   | 1.04     |
-| loss_q2   | 0.799    |
-| loss_q3   | 1.01     |
-| mse       | 0.955    |
-| mse_q0    | 1.01     |
-| mse_q1    | 1.03     |
-| mse_q2    | 0.795    |
-| mse_q3    | 0.953    |
+| grad_norm | 0.788    |
+| loss      | 0.998    |
+| loss_q0   | 1.02     |
+| loss_q1   | 0.91     |
+| loss_q2   | 0.943    |
+| loss_q3   | 1.12     |
+| mse       | 0.962    |
+| mse_q0    | 1        |
+| mse_q1    | 0.906    |
+| mse_q2    | 0.939    |
+| mse_q3    | 1        |
 | samples   | 128      |
 | step      | 0        |
-| vb        | 0.022    |
-| vb_q0     | 0.0342   |
-| vb_q1     | 0.00535  |
-| vb_q2     | 0.00399  |
-| vb_q3     | 0.0531   |
+| vb        | 0.036    |
+| vb_q0     | 0.0164   |
+| vb_q1     | 0.00444  |
+| vb_q2     | 0.00495  |
+| vb_q3     | 0.115    |
 ------------------------
 saving model 0...
 saving model 0.9999...
 saving model 0...
 saving model 0.9999...
-! Time needed: 00:00:33.
+! Time needed: 00:00:01.
 Last == leer:  True
 TXT LOG, complemented_line: 
-2023-07-13_15-36-19;;00:00:33;;10;;True;True;10;[[0.2, 0.2], [0.2, 0.2]];[2];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True
+2023-07-13_17-16-09;;00:00:01;;10;;True;False;10;[[0.2, 0.2], [0.2, 0.2]];[0, 1, 2, 3, 4];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True

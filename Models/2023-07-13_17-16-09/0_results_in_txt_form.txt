@@ -1,0 +1,2 @@
+model_name;wasserstein_sum;trainings_time;sampling_time;lr_anneal_steps;num_samples;preprocessing;min_max_norm;preprocess_count_number;preprocess_intervals;emb_layer;structure;norm_layer;dropout_layer;dropout;emb_nodes;batch_size;microbatch;lr;schedule_sampler;learn_sigma;sigma_small;class_cond;diffusion_steps;noise_schedule;rescale_learned_sigmas
+2023-07-13_17-16-09;;00:00:01;;10;;True;False;10;[[0.2, 0.2], [0.2, 0.2]];[0, 1, 2, 3, 4];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True

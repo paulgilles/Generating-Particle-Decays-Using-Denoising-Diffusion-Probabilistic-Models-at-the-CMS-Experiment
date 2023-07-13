@@ -7,14 +7,14 @@ Docstrings have been added, as well as DDIM sampling and a new collection of bet
 
 import enum
 import math
-
+import functools
 import sympy as sp
 import numpy as np
 import torch as th
 
 from scipy.special import lambertw
 from modified_improved_diffusion.nn import mean_flat
-from modified_improved_diffusion.losses import normal_kl, discretized_gaussian_log_likelihood
+from modified_improved_diffusion.losses import normal_kl, discretized_gaussian_log_likelihood,log_p_x0_x1
 
 
 def get_named_beta_schedule(schedule_name, num_diffusion_timesteps):
@@ -679,7 +679,8 @@ class GaussianDiffusion:
                 img = out["sample"]
 
     def _vb_terms_bpd(
-        self, model, x_start, x_t, t, clip_denoised=True, model_kwargs=None
+        self, model, x_start, x_t, t, clip_denoised=True, 
+        model_kwargs=None, min_max_norm=False
     ):
         """
         Get a term for the variational lower-bound.
@@ -702,18 +703,21 @@ class GaussianDiffusion:
         )
         kl = mean_flat(kl) / np.log(2.0)
 
-        decoder_nll = -discretized_gaussian_log_likelihood(
+        calc_log_p_x0_x1 = (discretized_gaussian_log_likelihood if 
+                            min_max_norm else log_p_x0_x1)
+        nlog_p_x0_x1 = -calc_log_p_x0_x1(
             x_start, means=out["mean"], log_scales=0.5 * out["log_variance"]
         )
-        assert decoder_nll.shape == x_start.shape
-        decoder_nll = mean_flat(decoder_nll) / np.log(2.0)
+        assert nlog_p_x0_x1.shape == x_start.shape
+        nlog_p_x0_x1 = mean_flat(nlog_p_x0_x1) / np.log(2.0)
 
-        # At the first timestep return the decoder NLL,
+        # At the first timestep return the nlog_p_x0_x1,
         # otherwise return KL(q(x_{t-1}|x_t,x_0) || p(x_{t-1}|x_t))
-        output = th.where((t == 0), decoder_nll, kl)
+        output = th.where((t == 0), nlog_p_x0_x1, kl)
         return {"output": output, "pred_xstart": out["pred_xstart"]}
 
-    def training_losses(self, model, x_start, t, model_kwargs=None, noise=None):
+    def training_losses(self, model, x_start, t, model_kwargs=None, 
+                        noise=None, min_max_norm=False):
         """
         Compute training losses for a single timestep.
 
@@ -742,6 +746,7 @@ class GaussianDiffusion:
                 t=t,
                 clip_denoised=False,
                 model_kwargs=model_kwargs,
+                min_max_norm=min_max_norm
             )["output"]
             if self.loss_type == LossType.RESCALED_KL:
                 terms["loss"] *= self.num_timesteps
@@ -764,6 +769,7 @@ class GaussianDiffusion:
                     x_t=x_t,
                     t=t,
                     clip_denoised=False,
+                    min_max_norm=min_max_norm
                 )["output"]
                 if self.loss_type == LossType.RESCALED_MSE:
                     # Divide by 1000 for equivalence with initial implementation.

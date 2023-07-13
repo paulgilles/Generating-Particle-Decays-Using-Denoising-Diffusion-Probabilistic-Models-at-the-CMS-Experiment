@@ -73,6 +73,7 @@ def main():
         schedule_sampler=schedule_sampler,
         weight_decay=args.weight_decay,
         lr_anneal_steps=args.lr_anneal_steps,
+        min_max_norm=args.min_max_norm
     ).run_loop()
 
     end_time = time.time()

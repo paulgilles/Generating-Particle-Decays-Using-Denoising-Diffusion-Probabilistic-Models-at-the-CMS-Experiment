@@ -164,6 +164,7 @@ def preprocess(data, min_max_norm, count_number=10, intervals=[(0.2, 0.2), (0.2,
         mean = np.mean(data, axis=0, keepdims=True) #@todo mean und std abspeichern
         std = np.std(data, axis=0, keepdims=True)
         normalized = (data - mean)/std
+        print(f"\nPREPROCESSING STD AND MEAN\nmean={mean}, std={std}")
         if full_output:
             return normalized, mean, std
     elif min_max_norm:

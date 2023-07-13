@@ -47,6 +47,7 @@ class TrainLoop:
         schedule_sampler=None,
         weight_decay=0.0,
         lr_anneal_steps=0,
+        min_max_norm=False
     ):
         self.model = model
         self.diffusion = diffusion
@@ -67,6 +68,7 @@ class TrainLoop:
         self.schedule_sampler = schedule_sampler or UniformSampler(diffusion)
         self.weight_decay = weight_decay
         self.lr_anneal_steps = lr_anneal_steps
+        self.min_max_norm = min_max_norm
 
         self.step = 0
         self.resume_step = 0
@@ -209,6 +211,7 @@ class TrainLoop:
                 micro,
                 t,
                 model_kwargs=micro_cond,
+                min_max_norm=self.min_max_norm
             )
 
             if last_batch or not self.use_ddp:
