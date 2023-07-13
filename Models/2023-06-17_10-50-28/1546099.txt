@@ -1,4 +1,0 @@
-submit -r 'UtsnameNodename != "vispa-worker01.physik.rwth-aachen.de" && UtsnameNodename != "vispa-worker02.physik.rwth-aachen.de" && UtsnameNodename != "vispa-worker03.physik.rwth-aachen.de"' -m 8000 -M 8000 python scripts/training.py --particle_type "muons" --toml_config config_training/test.toml 
-
-Trainiert bis zu 1 Million
-Schätzungsweise 20 Stunden

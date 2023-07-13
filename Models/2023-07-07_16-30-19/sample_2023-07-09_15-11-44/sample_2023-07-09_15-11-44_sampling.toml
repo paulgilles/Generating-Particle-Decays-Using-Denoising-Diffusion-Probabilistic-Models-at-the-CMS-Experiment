@@ -1,0 +1,13 @@
+# Argumente aus image_train create_arg_parser()
+clip_denoised=true
+num_samples=2048
+use_ddim=false
+
+#denoising_steps = [1,250,500,1000,1500,2000,2500,3000,3500,4000]
+#denoising_steps = [1,5,10,20,25,30,35,40,45,50]
+#denoising_steps = [1,250,500,1000,1500,2000,2500,3000,3500,4000]
+#denoising_steps = [3500, 3600, 3650, 3700, 3750, 3800, 3850, 3900, 3950, 4000]
+denoising_steps = [1,100,200,400,500,600,700,800,900,1000]
+
+#model_path=""
+

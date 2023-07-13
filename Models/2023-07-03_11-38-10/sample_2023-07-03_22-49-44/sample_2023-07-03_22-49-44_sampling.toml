@@ -1,8 +1,0 @@
-# Argumente aus image_train create_arg_parser()
-clip_denoised=true
-num_samples=2048
-use_ddim=false
-#model_path=""
-
-#HIER WURDE DIE DENOISING SCHRITTE GEÄNDERT
-#if count in [3500, 3600, 3650, 3700, 3750, 3800, 3850, 3900, 3950, 4000]:

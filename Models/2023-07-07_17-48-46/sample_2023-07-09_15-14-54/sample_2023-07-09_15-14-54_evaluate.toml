@@ -1,0 +1,28 @@
+plot_losses=false
+plot_denoising=false
+plot_comparison=false
+plot_hist_history=false
+plot_Z_analyse=true
+calc_wasserstein=false
+calc_wasserstein_sum=true
+
+model_type="ema"
+particle_type="muons"
+denoising_num_cols=5
+hist_history_num_cols=5
+hist_history_iterations=5
+
+min_max_norm=true
+
+create_pdf=false
+style_label = "seaborn-paper"
+
+#@audit Das muss noch geändert werden (Das wird auch schon bei training importiert (glaube ich))
+count_number = 10 
+intervals = [[0.2, 0.2], [0.2, 0.2]]
+
+
+title_size = 16
+
+color1 = "blue"
+color2 = "red"

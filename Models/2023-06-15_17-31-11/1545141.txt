@@ -1,4 +1,0 @@
-submit -m 8000 -M 8000 python scripts/training.py --particle_type "muons" --toml_config config_training/test.toml 
-
-Netwerk lernt nicht
-Daten sind nicht preprocessed

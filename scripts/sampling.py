@@ -9,6 +9,8 @@ import tomli as tomllib
 import numpy as np
 import torch as th
 import torch.distributed as dist
+import time
+
 
 from modified_improved_diffusion import dist_util, logger
 from modified_improved_diffusion.modified_script_util import (
@@ -21,10 +23,13 @@ from modified_improved_diffusion.modified_script_util import (
     creating_samples_folder,
     save_denoising_process,
     check_if_denoising_steps_is_valid,
+    return_runtime,
+    write_to_txt
 )
 
 def main():
-    
+    start_time = time.time()
+
     parser, sampling_in_loop = create_argparser()
     args = parser.parse_args()
 
@@ -55,7 +60,7 @@ def main():
     all_vectors = []
     all_labels = []
     batch_index = 0
-    denoising_process_images = np.zeros((10, 2048, 2, 4)) #@audit hardcoded sample size
+    denoising_process_images = np.zeros((10, args.num_samples, 2, 4)) #@audit hardcoded shape
     while len(all_vectors) * args.batch_size < args.num_samples:
         model_kwargs = {}
         if args.class_cond:
@@ -119,6 +124,13 @@ def main():
 
     dist.barrier()
     logger.log("sampling complete")
+    end_time = time.time()
+    logger.log(f"! Time needed: {return_runtime(end_time-start_time)}.")
+    write_to_txt({**vars(args), 
+                  "model_name": model_timestamp,
+                  "sampling_time": return_runtime(end_time-start_time)},
+                  saving_dir=os.path.dirname(samples_folder),
+                  new_line=False)
 
 
 def create_argparser():

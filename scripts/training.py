@@ -6,6 +6,7 @@ import argparse
 import tomli as tomllib
 import numpy as np
 import os
+import time
 import modified_improved_diffusion.dist_util as dist_util
 import modified_improved_diffusion.logger as logger
 
@@ -18,14 +19,21 @@ from modified_improved_diffusion.modified_script_util import (
     args_to_dict,
     add_dict_to_argparser,
     creating_models_folder,
-    copy_toml_config
+    copy_toml_config,
+    return_runtime,
+    write_to_txt
 )
 from modified_improved_diffusion.modified_train_util import TrainLoop
 
 def main():
+    start_time = time.time()
     saving_folder = creating_models_folder()
     args = create_argparser().parse_args()
     copy_toml_config(args.toml_config, saving_folder)
+    write_to_txt({**vars(args), 
+                "model_name": os.path.basename(saving_folder)},
+                saving_folder,
+                new_line=True)
 
     dist_util.setup_dist()
     logger.configure()
@@ -66,6 +74,12 @@ def main():
         weight_decay=args.weight_decay,
         lr_anneal_steps=args.lr_anneal_steps,
     ).run_loop()
+
+    end_time = time.time()
+    logger.log(f"! Time needed: {return_runtime(end_time-start_time)}.")
+    write_to_txt({"trainings_time": return_runtime(end_time-start_time),
+                  "model_name": os.path.basename(saving_folder)},
+                 saving_folder)
 
 
 def create_argparser():

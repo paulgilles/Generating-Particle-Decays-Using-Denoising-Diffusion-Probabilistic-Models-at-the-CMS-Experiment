@@ -8,9 +8,11 @@ Docstrings have been added, as well as DDIM sampling and a new collection of bet
 import enum
 import math
 
+import sympy as sp
 import numpy as np
 import torch as th
 
+from scipy.special import lambertw
 from modified_improved_diffusion.nn import mean_flat
 from modified_improved_diffusion.losses import normal_kl, discretized_gaussian_log_likelihood
 
@@ -38,6 +40,21 @@ def get_named_beta_schedule(schedule_name, num_diffusion_timesteps):
             num_diffusion_timesteps,
             lambda t: math.cos((t + 0.008) / 1.008 * math.pi / 2) ** 2,
         )
+    elif schedule_name == "fermi":
+
+        def fermi(t, m=6, k=10):
+            #p = -(1+sp.exp(m))*k / lambertw(sp.exp(k))
+            #intersection = (sp.exp(m)+p+1)/p
+            #if t < intersection:
+            #    return 1/(math.exp(k*t-m)+1)
+            #else:
+            #    return p*(t-1)
+            return 1/(math.exp(k*t-m)+1)
+
+        return betas_for_alpha_bar(
+            num_diffusion_timesteps,
+            fermi
+        )
     else:
         raise NotImplementedError(f"unknown beta schedule: {schedule_name}")
 
@@ -58,6 +75,7 @@ def betas_for_alpha_bar(num_diffusion_timesteps, alpha_bar, max_beta=0.999):
     for i in range(num_diffusion_timesteps):
         t1 = i / num_diffusion_timesteps
         t2 = (i + 1) / num_diffusion_timesteps
+        t1, t2 = np.array(t1), np.array(t2)
         betas.append(min(1 - alpha_bar(t2) / alpha_bar(t1), max_beta))
     return np.array(betas)
 

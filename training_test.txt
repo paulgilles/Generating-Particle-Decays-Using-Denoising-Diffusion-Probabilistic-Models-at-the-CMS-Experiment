@@ -1,0 +1,36 @@
+Last == leer:  True
+TXT LOG, new_line: 
+2023-07-13_15-36-19;;;;10;;True;True;10;[[0.2, 0.2], [0.2, 0.2]];[2];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True
+
+Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-13_15-36-19
+creating model and diffusion...
+creating data loader...
+training...
+------------------------
+| grad_norm | 0.799    |
+| loss      | 0.977    |
+| loss_q0   | 1.05     |
+| loss_q1   | 1.04     |
+| loss_q2   | 0.799    |
+| loss_q3   | 1.01     |
+| mse       | 0.955    |
+| mse_q0    | 1.01     |
+| mse_q1    | 1.03     |
+| mse_q2    | 0.795    |
+| mse_q3    | 0.953    |
+| samples   | 128      |
+| step      | 0        |
+| vb        | 0.022    |
+| vb_q0     | 0.0342   |
+| vb_q1     | 0.00535  |
+| vb_q2     | 0.00399  |
+| vb_q3     | 0.0531   |
+------------------------
+saving model 0...
+saving model 0.9999...
+saving model 0...
+saving model 0.9999...
+! Time needed: 00:00:33.
+Last == leer:  True
+TXT LOG, complemented_line: 
+2023-07-13_15-36-19;;00:00:33;;10;;True;True;10;[[0.2, 0.2], [0.2, 0.2]];[2];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True

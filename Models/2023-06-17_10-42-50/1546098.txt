@@ -1,3 +1,0 @@
-submit -r 'UtsnameNodename != "vispa-worker01.physik.rwth-aachen.de" && UtsnameNodename != "vispa-worker02.physik.rwth-aachen.de" && UtsnameNodename != "vispa-worker03.physik.rwth-aachen.de"' -m 8000 -M 8000 python scripts/training.py --particle_type "muons" --toml_config config_training/test.toml 
-
-Embedding in hidden 1 und 2 eingebaut, statt nur in 3 wie zuvor

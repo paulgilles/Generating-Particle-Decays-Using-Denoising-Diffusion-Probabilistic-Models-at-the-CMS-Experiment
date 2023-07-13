@@ -1,6 +1,0 @@
-# Argumente aus image_train create_arg_parser()
-clip_denoised=true
-num_samples=16
-use_ddim=false
-#model_path=""
-

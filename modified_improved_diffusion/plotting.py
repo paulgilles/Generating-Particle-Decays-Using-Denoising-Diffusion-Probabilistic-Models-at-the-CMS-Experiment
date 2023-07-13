@@ -9,14 +9,15 @@ from modified_improved_diffusion.importing import (
     calc_pT,
     calc_m,
     calc_Z_vector,
-    postprocess
+    postprocess,
+    calc_KL
 )
 from modified_improved_diffusion.evaluation_util import ( 
     extract_interation_from_filename,
     load_npz,
     get_equally_spaced_values
 )
-
+import modified_improved_diffusion.gaussian_diffusion as gd
 
 def plot_4x4_grid_hist(data):
     anzahl_histogramme = data.shape[2]
@@ -134,7 +135,6 @@ def plot_comparison_distribution(result_folder,
                                  component, create_pdf=False, 
                                  npz_file=None,
                                  particle_type="muons"):
-
     npz = load_npz(npz_file)
     if particle_type=="muons":
         data = muon_events("all", False)
@@ -290,17 +290,17 @@ def plot_Z_analyse(result_folder, create_pdf=False, particle_type="muons",
     print(np.shape(npz))
     npz = postprocess(npz, min_max_norm, minimum, maximum)
 
-    num_plots = 6
-    num_cols = 6
+    num_plots = 7
+    num_cols = 7
     num_rows = (num_plots - 1) // num_cols + 1
 
     z_data = calc_Z_vector(data)
     z_npz = calc_Z_vector(npz)
-    measurands = ["m", "E", "pT", "px", "py", "pz"]
+    measurands = ["m", "E", "eta", "px", "py", "pz","pT"]
 
     def return_correct_measurand(z, i, return_limit=False):
         if i==0:
-            if return_limit: return [0,200]
+            if return_limit: return [50,130]
             return calc_m(z)
         elif i==1:
             if return_limit: return None
@@ -308,29 +308,36 @@ def plot_Z_analyse(result_folder, create_pdf=False, particle_type="muons",
         elif i==2:
             if return_limit: return None
             return calc_pseudo_rapidity(z)
-        elif 2 < i < 6:
+        elif 2 < i < 5:
+            if return_limit: return [-100,100]
+            return z[:,i-2]
+        elif i == 5:
             if return_limit: return None
             return z[:,i-2]
+        elif i == 6:
+            if return_limit: return None
+            return calc_pT(z)
         else: 
             raise ValueError(f"index is out of range: i={i}")
 
-    fig, axes = plt.subplots(num_rows, num_cols, figsize=(30,6*num_rows))
+    fig, axes = plt.subplots(num_rows, num_cols, figsize=(5*num_cols,5*num_rows))
     for i, ax in enumerate(axes.flat):
         if i < num_plots:
             min_npz = min(return_correct_measurand(z_npz, i))
             max_npz = max(return_correct_measurand(z_npz, i))
+            xlimit = return_correct_measurand(z_data, i, return_limit=True)
             if xlimit is not None:
                 ax.set_xlim(*xlimit)
                 range=(xlimit[0], xlimit[1])
             else:
                 range=(min_npz, max_npz)
-            ax.hist(return_correct_measurand(z_npz, i), bins=70, histtype="step",
-                    color = "red", label = "samples", range=range)
+            KL_div = calc_KL(return_correct_measurand(z_npz, i), return_correct_measurand(z_data,i))
+            ax.hist(return_correct_measurand(z_npz, i), bins=50, histtype="step",
+                    label = f"samples \nKL={round(KL_div,4)}", range=range)
             if particle_type is not None:
                 ax.hist(return_correct_measurand(z_data,i), 
-                        bins=70, histtype="step", color="blue", 
+                        bins=50, histtype="step", 
                         label="data", range=range)
-            xlimit = return_correct_measurand(z_data, i, return_limit=True)
             ax.set_xlabel(measurands[i])
             ax.set_ylabel("events")
             ax.legend()
@@ -343,6 +350,37 @@ def plot_Z_analyse(result_folder, create_pdf=False, particle_type="muons",
         plt.savefig(target + ".pdf")
     print(f"Plot saved as '{target}.pdf/.png'")
     
+
+def plot_schedule(noise_schedule, steps, result_folder, create_pdf=False):
+    if type(noise_schedule) == str:
+        betas = [gd.get_named_beta_schedule(noise_schedule, steps)]
+    else:
+        betas = []
+        for schedule in noise_schedule:
+            betas += [gd.get_named_beta_schedule(schedule, steps)]
+    alphas_cumprod = []
+    for beta in betas:
+        beta = np.array(beta, dtype=np.float64)
+        alphas = 1.0 - beta
+        alphas_cumprod += [np.cumprod(alphas, axis=0)]
+    x = np.arange(steps) / steps
+
+    fig, ax = plt.subplots(1, 1, figsize=(10,10))
+    for y in alphas_cumprod:
+        ax.plot(x, y)
+    ax.set_xlabel("timestep / max_timestep")
+    ax.set_ylabel("alphas_cumprod")
+    ax.legend()
+    plt.tight_layout()
+    file_name = f"plot_schedule_{noise_schedule}"
+    target = os.path.join(result_folder, file_name)
+    plt.savefig(target + ".png")
+    if create_pdf:
+        plt.savefig(target + ".pdf")
+    print(f"Plot saved as '{target}.pdf/.png'")   
+
+
+
 
 def return_files_corresponding_to_hist_history_iterations(path_dict,
                                                           hist_history_iterations):
@@ -386,5 +424,5 @@ def return_files_corresponding_to_hist_history_iterations(path_dict,
 
 
 if __name__=="__main__":
-
-    pass
+    plots_folder = "/home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/plots"
+    plot_schedule(["linear", "cosine", "fermi"], 4000, plots_folder)

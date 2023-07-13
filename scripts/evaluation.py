@@ -2,10 +2,12 @@ import argparse
 import tomli as tomllib
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 from modified_improved_diffusion.modified_script_util import (
     add_dict_to_argparser,
     copy_toml_config,
-    filter_args
+    filter_args,
+    write_to_txt
 )
 from modified_improved_diffusion.evaluation_util import (
     load_npz,
@@ -21,18 +23,21 @@ from modified_improved_diffusion.plotting import (
     plot_hist_history,
     plot_Z_analyse
 )
+from modified_improved_diffusion.importing import (
+    calc_wasserstein_sum
+)
 
 
 def main():
     args = create_argparser().parse_args()
     args_dict = vars(args)
     sample_folder, npz_filename = os.path.split(args.npz_file)
+    model_timestep = os.path.basename(os.path.dirname(sample_folder))
     copy_toml_config(source=args.toml_config, target=sample_folder, evaluate=True)
 
 
     if args.plot_losses:
         progressCSV_path = finding_progessCSV(args.npz_file)
-        print("hey; ", progressCSV_path)
         for loss_type in ["loss", "mse", "vb"]:
             plot_csv_column(progressCSV_path, loss_type, sample_folder, 
                             ignore_error=True, 
@@ -73,10 +78,19 @@ def main():
             plot_hist_history(path_dict, component, sample_folder,
                               **filter_args(plot_hist_history, args_dict))
 
-
+    
     if args.plot_Z_analyse:
-        plot_Z_analyse(sample_folder, **filter_args(plot_Z_analyse, args_dict))
+        with plt.style.context(args.style_label):
+            plot_Z_analyse(sample_folder, **filter_args(plot_Z_analyse, args_dict))
         
+
+    wasserstein_sum=""
+    if args.calc_wasserstein_sum:
+        wasserstein_sum = calc_wasserstein_sum(sample_folder, **filter_args(calc_wasserstein_sum, args_dict))
+    
+
+    write_to_txt({"wasserstein_sum": wasserstein_sum, "model_name": model_timestep}, 
+                 saving_dir=os.path.dirname(sample_folder), new_line = False)
 
 
 

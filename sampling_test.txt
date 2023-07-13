@@ -1,0 +1,10 @@
+Logging to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-13_15-36-19/sample_2023-07-13_15-38-21
+creating model and diffusion...
+sampling...
+created 16 samples
+saving to /home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/Models/2023-07-13_15-36-19/sample_2023-07-13_15-38-21/sample_num=16_clip=True_steps=000010.npz
+sampling complete
+! Time needed: 00:00:01.
+Last == leer:  True
+TXT LOG, complemented_line: 
+2023-07-13_15-36-19;;00:00:33;00:00:01;10;16;True;True;10;[[0.2, 0.2], [0.2, 0.2]];[2];[256, 256, 256, 256, 256];[];[];0.3;32;128;16;0.0001;loss-second-moment;True;True;False;1000;cosine;True

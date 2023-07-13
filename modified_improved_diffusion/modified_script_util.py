@@ -5,6 +5,7 @@ import shutil
 import numpy as np
 import inspect
 
+import modified_improved_diffusion.logger as logger
 from . import gaussian_diffusion as gd
 from .modified_respace import SpacedDiffusion, space_timesteps
 from .forwardModel import forwardNet
@@ -47,6 +48,79 @@ def copy_toml_config(source, target, sampling=False, evaluate=False):
     target += ".toml"
     shutil.copyfile(source, target)
 
+
+def create_new_line(args, header):
+    line = ""
+    for index, column in enumerate(header):
+        try: 
+            cell = args[column]
+        except: 
+            cell = ""
+        if index < len(header)-1:
+            line += str(cell) + ";"
+        else:
+            line += str(cell) + "\n"
+    return line
+
+
+def add_to_line(args, header, changed_line):
+    for index, column in enumerate(changed_line):
+        if column == "":
+            try:
+                changed_line[index] = args[header[index]]
+            except:
+                pass
+    line = ""
+    for index, column in enumerate(changed_line):
+        if index < len(changed_line)-1:
+            line += f"{changed_line[index]};"
+        else:
+            line += f"{changed_line[index]}"
+    return line      
+
+
+
+def write_to_txt(args, saving_dir, new_line=False):
+    source = '/home/paulgilles/Bachelorarbeit/modified-improved-diffusion-main/2_Header_backup.txt'
+    file_path = os.path.join(saving_dir, "0_results_in_txt_form.txt")
+    if not os.path.isfile(file_path):
+        shutil.copyfile(source, file_path)
+
+    with open(file_path, "r") as file:
+        text = file.read()
+        header = text.split("\n")[0].split(";")
+        last = text.split("\n")[-1]
+        print("Last == leer: ", last == "")
+
+    if new_line:
+        with open(file_path, "w") as file:
+            file.write(text + create_new_line(args, header))
+        print(f"TXT LOG, new_line: \n{create_new_line(args, header)}")
+
+
+    else:
+        with open(file_path, "r") as file:
+            text = file.read()
+        with open(file_path, "w") as file:
+            model_name = args["model_name"]
+            text = text.split("\n")
+            line_number = 0
+            for line in text:
+                if model_name in line:
+                    break
+                line_number += 1
+            complemented_line = add_to_line(args, header,line.split(";"))
+            text_in_lines = text[:line_number] + [complemented_line] + text[line_number+1:]
+            text = "\n".join(text_in_lines)
+            file.write(text)
+            print(f"TXT LOG, complemented_line: \n{complemented_line}")
+
+
+
+def return_runtime(runtime_in_sec):
+    hours, remainder = divmod(runtime_in_sec, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
 
 
 def save_denoising_process(samples_folder, denoising_images, args):

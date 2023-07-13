@@ -1,0 +1,1 @@
+Wasserstein-Abstand: 12.842857142857143

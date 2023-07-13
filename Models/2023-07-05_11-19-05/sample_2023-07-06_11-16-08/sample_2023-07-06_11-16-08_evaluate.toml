@@ -3,6 +3,8 @@ plot_denoising=false
 plot_comparison=false
 plot_hist_history=false
 plot_Z_analyse=true
+calc_wasserstein=false
+calc_wasserstein_sum=true
 
 model_type="ema"
 particle_type="muons"
@@ -14,7 +16,7 @@ min_max_norm=true
 
 create_pdf=false
 
-#@audit Das muss noch geändert werden
+#@audit Das muss noch geändert werden (Das wird auch schon bei training importiert (glaube ich))
 count_number = 10 
 intervals = [[0.2, 0.2], [0.2, 0.2]]
 

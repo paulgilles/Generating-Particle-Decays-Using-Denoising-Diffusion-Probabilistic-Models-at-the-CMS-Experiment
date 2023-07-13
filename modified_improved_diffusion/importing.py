@@ -2,6 +2,10 @@ import numpy as np
 import torch as th
 from mpi4py import MPI
 from torch.utils.data import DataLoader, Dataset
+from scipy.stats import entropy, wasserstein_distance
+from modified_improved_diffusion.evaluation_util import load_npz
+import os
+
 path = "/net/scratch/cms/data/toysets/Zll_sorted/data_delphes.npy"
 
 def load_all_data(path):
@@ -113,6 +117,46 @@ def calc_m(data, vector_pos=None):
     return m
 
 
+def calc_KL(distribution1, distribution2):
+    range = (np.min(distribution2), np.max(distribution2))
+    distribution1, _ = np.histogram(distribution1, bins=70, range=range)
+    distribution2, _ = np.histogram(distribution2, bins=70, range=range)
+    epsilon = 1e-7
+    distribution1, distribution2 = distribution1.astype("float64"), distribution2.astype("float64")
+    distribution1 += epsilon
+    distribution2 += epsilon
+    return entropy(distribution1, distribution2)
+
+
+def calc_wasserstein_sum(result_folder, create_pdf=False, npz_file=None,
+                         particle_type="muons", min_max_norm=True):
+    npz = load_npz(npz_file)
+    if particle_type=="muons":
+        data = muon_events("all", False)
+    elif particle_type=="electrons":
+        data = electron_events("all", False)
+    else:
+        raise ValueError(f"No valid input for 'particle_type'. {particle_type}")
+    _, min, max = preprocess(data, min_max_norm=min_max_norm, full_output=True)
+    npz = np.transpose(npz, (0,2,1))
+    npz = postprocess(npz, min_max_norm, min, max)
+    np.random.shuffle(data)
+    data = data[:len(npz)]
+
+    npz_reshaped = npz.reshape(np.shape(npz)[0]*np.shape(npz)[1], np.shape(npz)[2])
+    data_reshaped = data.reshape(np.shape(data)[0]*np.shape(data)[1], np.shape(data)[2])
+    wasserstein_sum = 0
+    for component in [0,1,2,3]:
+        range = (np.min(npz_reshaped), np.max(npz_reshaped))
+        npz_p , _ = np.histogram(npz_reshaped[:, component], bins=70,range=range)
+        data_p, _ = np.histogram(data_reshaped[:, component], bins=70, range=range)
+        wasserstein_sum += wasserstein_distance(npz_p, data_p)
+    filename = f"Wasserstein={wasserstein_sum}.txt"
+    target = os.path.join(result_folder, filename)
+    with open(target, 'w') as file:
+        file.write(f"Wasserstein-Abstand: {wasserstein_sum}")
+    print("wasserstein_sum was calculated.")
+    return wasserstein_sum
 
 
 def preprocess(data, min_max_norm, count_number=10, intervals=[(0.2, 0.2), (0.2, 0.2)], full_output=False):

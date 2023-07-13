@@ -1,0 +1,28 @@
+todo
+
+Validation Loss angucken
+[Check] Netzwerk vergrößern
+Parameter variieren
+Plots verbessern
+Elektronen
+neue Metrik
+Winkel Plot
+
+Heute
+[Check] Write_to_txt fixen 
+    (jeder hat seine eigene
+     Datei) (30 Min)
+[Check] write_to_txt testen (15 Min)
+Pause (15 Min)
+decoder nll verbessern (1 Stunde)
+Trainings losschicken
+CSV Tabelle nachtragen
+(function that searches 
+    for txt files and adds
+    them to the big file)
+
+
+WICHTIGE NOTIZ !!!
+clip_denoised ist bei _vb_terms_bpd
+auf False gesetzt
+decoder nll verändern

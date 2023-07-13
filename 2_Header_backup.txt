@@ -1,0 +1,1 @@
+model_name;wasserstein_sum;trainings_time;sampling_time;lr_anneal_steps;num_samples;preprocessing;min_max_norm;preprocess_count_number;preprocess_intervals;emb_layer;structure;norm_layer;dropout_layer;dropout;emb_nodes;batch_size;microbatch;lr;schedule_sampler;learn_sigma;sigma_small;class_cond;diffusion_steps;noise_schedule;rescale_learned_sigmas
