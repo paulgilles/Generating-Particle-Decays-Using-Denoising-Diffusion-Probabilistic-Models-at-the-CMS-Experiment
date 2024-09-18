@@ -2,7 +2,7 @@
 ## Bachelor’s thesis in physics by Paul Gilles
 ### III. Physics Institute A | superviser: Prof. Dr. Martin Erdmann
 
-This is the code and all trained models used while writing my thesis. Modified-improved-diffusion-main is based on improved-diffusion-main by Alex Nichol et al. from OpenAI. Their code was rewritten to use DDPMs to generate particle decays at the CMS experiment instead of images. This repo is a little messy because this repo was not activly used during my work on my thesis. It was a privat repot to share my code with my direct supervisor (one of the Phds Students). Maybe I am clean up one time. If there are any question just message me via paul.gilles[at]rwth-aachen.de
+This is the code and all trained models used while writing my thesis. Modified-improved-diffusion-main is based on improved-diffusion-main by Alex Nichol et al. from OpenAI. Their code was rewritten to use DDPMs to generate particle decays at the CMS experiment instead of images. This repo is a little messy because this repo was not activly used during my work on my thesis. It was a privat repot to share my code with my direct supervisor (one of the Phds Students). Maybe I am gonna clean up sometime. If there are any question just message me via paul.gilles[at]rwth-aachen.de
 
 
 Excerpt from the conclusion of my thesis:
